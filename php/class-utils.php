@@ -1,5 +1,5 @@
 <?php 
-class ClassUtils
+class Utilities
 {
     
 }
