@@ -21,10 +21,10 @@ if (!class_exists('Utilities')) {
                     $champ['name'] = $champ['id'];
                 if (!isset($champ['class']))
                     $champ['class'] = '';
+                if (!isset($champ['css']))
+                    $champ['css'] = '';
                 if (!isset($champ['default']))
                     $champ['default'] = '';
-                if (!isset($champ['disabled']))
-                    $champ['disabled'] = false;
                 if (!isset($champ['title']))
                     $champ['title'] = isset($champ['name']) ? $champ['name'] : '';
                 if (!isset($champ['description']))
@@ -104,22 +104,37 @@ if (!class_exists('Utilities')) {
                     case 'sectionstart':
                         // We start/reset the session.
                         $_SESSION['util-data'] = array();
-                        ?>
-                        <div class="wrap">
-                        <div id="<?php echo esc_attr($champ['id']); ?>" class="metabox-container">
-                        <div class='block-form'>
-                        <table class="wp-list-table widefat fixed pages">
-                        <tbody>
-                        <?php
+                        section_start();
                         break;
                     case 'sectionend':
-                        ?>
-                        </tbody>
-                        </table>
-                        </div>
-                        </div>
-                        </div>
-                        <?php
+                        section_end();
+                        break;
+                    case 'text':
+                    case 'email':
+                    case 'number':
+                    case 'password':
+                    case 'color':
+                        $type = $champ['type'];
+                        input_x($champ['name'], $champ['id'], $type, $champ['css'], $champ_value, $champ['class'], $champ['placeholder']);
+                        break;
+                    case 'textarea':
+                        textarea_x($champ['name'], $champ['id'], $champ['css'], $champ_value, $champ['class'], $champ['placeholder']);
+                        break;
+                    case 'texteditor':
+                        texteditor_x($champ['name'], $champ['id'], $champ_value);
+                        break;
+                    case 'select':
+                    case 'multiselect':
+                        select_x($champ['name'], $champ['id'], $champ['type'], $champ['css'], $champ['class']);
+                        break;
+                    case 'radio':
+                        radio_x($champ['options'], $champ['name'], $champ['css'], $champ['class'], $champ_value);
+                        break;
+                    case 'checkbox':
+                        checkbox_x($champ['name'], $champ['title'], $champ_value, $champ['id'], $champ['css'], $champ['class'], $champ['description']);
+                        break;
+                    case 'file':
+                        file_x($champ['name'], $champ['class'], $champ_value);
                         break;
                 }
             }
@@ -127,64 +142,54 @@ if (!class_exists('Utilities')) {
         }
 
 
-                        /**
-                         * Get a value by key in an array if defined
-                         *
-                         * @param array  $values Array to search into.
-                         * @param string $search_key Searched key.
-                         * @param mixed  $default_value Value if the key does not exist in the array.
-                         *
-                         * @return mixed
-                         */
-                        public static function get_right_value($values, $search_key, $default_value = '')
-                        {
-                            if (isset($values[$search_key])) {
-                                $default_value = $values[$search_key];
-                            }
+        public static function get_right_value($values, $search_key, $default_value = ''){
+            if (isset($values[$search_key])) {
+                $default_value = $values[$search_key];
+            }
 
-                            return $default_value;
-                        }
+            return $default_value;
+        }
 
-                        /**
-                         * Explode a character.
-                         *
-                         * @param string $delimiters Delimiters.
-                         * @param string $string String value.
-                         *
-                         * @return false|string[]
-                         */
-                        public static function explodes_x($delimiters, $string)
-                        {
-                            return explode(chr(1), str_replace($delimiters, chr(1), $string));
-                        }
+        /**
+         * Explode a character.
+         *
+         * @param string $delimiters Delimiters.
+         * @param string $string String value.
+         *
+         * @return false|string[]
+         */
+        public static function explodes_x($delimiters, $string)
+        {
+            return explode(chr(1), str_replace($delimiters, chr(1), $string));
+        }
 
-                        /**
-                         * Returns a media URL
-                         *
-                         * @param mixed $media_id Media ID.
-                         *
-                         * @return mixed
-                         */
-                        public static function get_media_url($media_id)
-                        {
-                            $attachment = wp_get_attachment_image_src($media_id, 'full');
+        /**
+         * Returns a media URL
+         *
+         * @param mixed $media_id Media ID.
+         *
+         * @return mixed
+         */
+        public static function get_media_url($media_id)
+        {
+            $attachment = wp_get_attachment_image_src($media_id, 'full');
 
-                            return $attachment[0];
-                        }
+            return $attachment[0];
+        }
 
-                        public static function find_in_array_by_key($root_value, $key)
-                        {
-                            $bracket_pos         = strpos($key, '[');
-                            $usable_value_index  = substr($key, $bracket_pos);
-                            $usable_value_index2 = str_replace('[', '', $usable_value_index);
-                            $temp_array          = explode(']', $usable_value_index2, -1);
-                            foreach ($temp_array as $key => $value) {
-                                if (!is_array($root_value) || !isset($root_value[$value])) {
-                                    return false;
-                                }
-                                $root_value = $root_value[$value];
-                            }
-                            return $root_value;
-                        }
-                    }
+        public static function find_in_array_by_key($root_value, $key)
+        {
+            $bracket_pos         = strpos($key, '[');
+            $usable_value_index  = substr($key, $bracket_pos);
+            $usable_value_index2 = str_replace('[', '', $usable_value_index);
+            $temp_array          = explode(']', $usable_value_index2, -1);
+            foreach ($temp_array as $key => $value) {
+                if (!is_array($root_value) || !isset($root_value[$value])) {
+                    return false;
                 }
+                $root_value = $root_value[$value];
+            }
+            return $root_value;
+        }
+    }
+}
