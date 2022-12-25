@@ -4,14 +4,13 @@ if (!class_exists('Utilities')) {
     class Utilities
     {
 
-        /**
-         * Formulaire
-         * @param array $data
-         */
-
+		/**
+		 * Formulaire of admin_form
+		 * @param mixed $data
+		 * @return bool|string
+		 */
         public static function admin_form($data)
         {
-			global $o_row_templates;
             ob_start();
             foreach ($data as $champ) {
                 if (!isset($champ['type']))
@@ -36,8 +35,6 @@ if (!class_exists('Utilities')) {
                     $champ['placeholder'] = '';
                 if (!isset($champ['btn_value']))
                     $champ['btn_value'] = '';
-				if ( ! isset( $champ['row_class'] ) ) 
-					$champ['row_class'] = '';
 				if ( ! isset( $champ['row_css'] ) )
 					$champ['row_css'] = '';
 				if ( ! isset( $champ['ig_desc'] ) ) 
@@ -96,15 +93,7 @@ if (!class_exists('Utilities')) {
 
 				if ( ! in_array( $champ['type'], $section_types ) && ! $champ['ig_desc'] ) {
 					$descrip = $champ['description'];
-					?>
-				<tr style="<?php echo esc_attr( $champ['row_css'] ); ?>" class="<?php echo esc_attr( $champ['row_class'] ); ?>">
-				<td class=''>
-					<?php
-					echo wp_kses_post( $champ['title'] );
-					echo wp_kses_post( "<div class=''>" . $descrip . '</div>' );
-					?>
-				</td>
-					<?php
+					champ_text_desc($champ['title'], $descrip);
 				}
 
                 switch ($champ['type']) {
@@ -122,6 +111,8 @@ if (!class_exists('Utilities')) {
                     case 'password':
                     case 'color':
                     case 'date':
+                    case 'datetime':
+                    case 'month':
                     case 'hour':
                         $type = $champ['type'];
                         input_x($champ['name'], $champ['id'], $type, $champ['css'], $champ_value, $champ['class'], $champ['placeholder']);
@@ -228,12 +219,6 @@ if (!class_exists('Utilities')) {
 				'class'          => array(),
 				'value'          => array(),
 				'style'          => array(),
-				'data-ttf'       => array(),
-				'data-fonturl'   => array(),
-				'data-fontname'  => array(),
-				'data-color'     => array(),
-				'data-minwidth'  => array(),
-				'data-minheight' => array(),
 			);
 
 			$allowed_balises['br'] = array();
@@ -247,20 +232,12 @@ if (!class_exists('Utilities')) {
 				'value'          => array(),
 				'min'            => array(),
 				'max'            => array(),
-				'row_class'      => array(),
 				'selected'       => array(),
 				'checked'        => array(),
 				'readonly'       => array(),
 				'placeholder'    => array(),
-				'step'           => array(),
-				'data-fonturl'   => array(),
-				'data-fontname'  => array(),
-				'data-minwidth'  => array(),
-				'data-minheight' => array(),
+				'hidden'    	 => array(),
 				'autocomplete'   => array(),
-				'autocorrect'    => array(),
-				'autocapitalize' => array(),
-				'spellcheck'     => array(),
 				'pattern'        => array(),
 				'required'       => array(),
 			);
@@ -273,17 +250,10 @@ if (!class_exists('Utilities')) {
 				'value'          => array(),
 				'action'         => array(),
 				'autocomplete'   => array(),
-				'row_class'      => array(),
 				'novalidate'     => array(),
 				'method'         => array(),
 				'readonly'       => array(),
 				'target'         => array(),
-				'data-fonturl'   => array(),
-				'data-fontname'  => array(),
-				'data-minwidth'  => array(),
-				'data-minheight' => array(),
-				'autocorrect'    => array(),
-				'autocapitalize' => array(),
 				'hidden'         => array(),
 			);
 
@@ -292,18 +262,9 @@ if (!class_exists('Utilities')) {
 				'name'                 => array(),
 				'data-id'              => array(),
 				'class'                => array(),
-				'row_class'            => array(),
 				'role'                 => array(),
-				'aria-labelledby'      => array(),
-				'aria-hidden'          => array(),
-				'data-fonturl'         => array(),
-				'data-minwidth'        => array(),
-				'data-minheight'       => array(),
-				'data-tooltip-content' => array(),
 				'tabindex'             => array(),
 				'style'                => array(),
-				'data-tooltip-title'   => array(),
-				'data-placement'       => array(),
 				'media'                => array(),
 			);
 			$allowed_balises['i']   = array();
@@ -313,21 +274,15 @@ if (!class_exists('Utilities')) {
 				'name'              => array(),
 				'class'             => array(),
 				'value'             => array(),
-				'data-tpl'          => array(),
 				'style'             => array(),
-				'data-id'           => array(),
-				'data-dismiss'      => array(),
-				'aria-hidden'       => array(),
 				'data-editor'       => array(),
 				'type'              => array(),
-				'data-wp-editor-id' => array(),
 			);
 
 			$allowed_balises['body'] = array(
 				'id'                 => array(),
 				'name'               => array(),
 				'class'              => array(),
-				'data-gr-c-s-loaded' => array(),
 			);
 
 			$allowed_balises['a']        = array(
@@ -336,12 +291,8 @@ if (!class_exists('Utilities')) {
 				'class'            => array(),
 				'data-tpl'         => array(),
 				'href'             => array(),
-				'data-toggle'      => array(),
-				'data-target'      => array(),
-				'data-modalid'     => array(),
 				'target'           => array(),
 				'data-group'       => array(),
-				'data-slide-index' => array(),
 				'download'         => array(),
 				'style'            => array(),
 			);
@@ -353,14 +304,11 @@ if (!class_exists('Utilities')) {
 				'style'      => array(),
 				'multiple'   => array(),
 				'tabindex'   => array(),
-				'data-rule'  => array(),
-				'data-group' => array(),
 			);
 			$allowed_balises['optgroup'] = array(
 				'id'       => array(),
 				'name'     => array(),
 				'class'    => array(),
-				'data-tpl' => array(),
 				'style'    => array(),
 				'multiple' => array(),
 				'tabindex' => array(),
@@ -382,8 +330,6 @@ if (!class_exists('Utilities')) {
 				'class'              => array(),
 				'value'              => array(),
 				'style'              => array(),
-				'data-tooltip-title' => array(),
-				'data-placement'     => array(),
 			);
 
 			$allowed_balises['h1']     = array(
@@ -414,7 +360,6 @@ if (!class_exists('Utilities')) {
 				'autocomplete'   => array(),
 				'autocorrect'    => array(),
 				'autocapitalize' => array(),
-				'spellcheck'     => array(),
 				'class'          => array(),
 				'rows'           => array(),
 				'cols'           => array(),
@@ -425,8 +370,6 @@ if (!class_exists('Utilities')) {
 
 			$allowed_balises['table'] = array(
 				'border'      => array(),
-				'cellpadding' => array(),
-				'cellspacing' => array(),
 				'class'       => array(),
 				'style'       => array(),
 			);
@@ -435,7 +378,6 @@ if (!class_exists('Utilities')) {
 				'align'   => array(),
 				'class'   => array(),
 				'style'   => array(),
-				'data-id' => array(),
 			);
 
 			$allowed_balises['td'] = array(

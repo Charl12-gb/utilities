@@ -1,27 +1,62 @@
 <?php 
 
-function section_start($id){
+/**
+ * Start of the section
+ * @param string $id            -> id section
+ * @param string $div_class     -> class section
+ * @return void
+ */
+function section_start($id, $div_class=null){
     ?>
     <div class="wrap">
     <div id="<?php echo esc_attr($id); ?>" class="metabox-container">
-    <table class="">
-    <tbody></tbody>
+    <div class="<?php echo esc_attr($div_class); ?>">
     <?php
 }
 
+/**
+ * End of the section
+ * @return void
+ */
 function section_end(){
     ?>
-    </tbody>
-    </table>
+    </div>
     </div>
     </div>
     <?php
 }
 
-// Standard text inputs and subtypes like 'number'
+/**
+ * Part title and description of the fields
+ * @param string $title
+ * @param string $description
+ * @return void
+ */
+function champ_text_desc($title, $description){
+    ?>
+	<div class="">
+	<?php
+		echo wp_kses_post( $title );
+		echo wp_kses_post( "<div class=''>" . $description . '</div>' );
+	?>
+	</div>
+	<?php
+}
+
+/**
+ * Standard text inputs and subtypes like 'text'
+ * @param string $name
+ * @param string $id
+ * @param string $type
+ * @param string $style
+ * @param string $value
+ * @param string $class
+ * @param string $placeholder
+ * @return void
+ */
 function input_x($name, $id, $type, $style, $value, $class, $placeholder){
     ?>
-    <td>
+    <div>
         <input
             name="<?php echo esc_attr( $name ); ?>"
             id="<?php echo esc_attr( $id ); ?>"
@@ -30,13 +65,23 @@ function input_x($name, $id, $type, $style, $value, $class, $placeholder){
             value="<?php echo esc_attr( $value ); ?>"
             class="<?php echo esc_attr( $class ); ?>"
             placeholder="<?php echo esc_attr( $placeholder ); ?>"/>
-        </td>
+        </div>
     <?php
 }
 
+/**
+ * Textarea standard entry
+ * @param string $name
+ * @param string $id
+ * @param string $style
+ * @param string $value
+ * @param string $class
+ * @param string $placeholder
+ * @return void
+ */
 function textarea_x($name, $id, $style, $value, $class, $placeholder){
     ?>
-    <td>
+    <div>
         <textarea 
             name="<?php echo esc_attr( $name ); ?>"
             id="<?php echo esc_attr( $id ); ?>"
@@ -45,12 +90,19 @@ function textarea_x($name, $id, $style, $value, $class, $placeholder){
             class="<?php echo esc_attr( $class ); ?>">
             <?php echo esc_textarea( $value ); ?>
         </textarea>
-    <td>
+    <div>
     <?php
 }
 
+/**
+ * Text editor fields
+ * @param string $name
+ * @param string $id
+ * @param string $value
+ * @return void
+ */
 function texteditor_x($name, $id, $value){
-    ?><td><?php
+    ?><div><?php
     wp_editor(
         $value,
         $id,
@@ -61,9 +113,20 @@ function texteditor_x($name, $id, $value){
             'textarea_rows' => 10,
         )
     );
-    ?></td><?php
+    ?></div><?php
 }
 
+/**
+ * Selector fields
+ * @param string $name
+ * @param string $id
+ * @param string $type
+ * @param string $style
+ * @param string $class
+ * @param array $options
+ * @param string $value
+ * @return void
+ */
 function select_x($name, $id, $type, $style, $class, $options, $value){
 
 	$select_is_multiple = '';
@@ -71,7 +134,7 @@ function select_x($name, $id, $type, $style, $class, $options, $value){
 		$select_is_multiple = ' multiple="multiple"';
 	}
 	?>
-    <td>
+    <div>
         <select 
             name="<?php echo esc_attr( $name ); ?>"
             id="<?php echo esc_attr( $id ); ?>"
@@ -94,13 +157,24 @@ function select_x($name, $id, $type, $style, $class, $options, $value){
             }
             ?>
         </select>
-    </td>
+    </div>
     <?php
 }
 
+/**
+ * Checkbox fields
+ * @param string $name
+ * @param string $title
+ * @param string $value
+ * @param string $id
+ * @param string $style
+ * @param string $class
+ * @param string $description
+ * @return void
+ */
 function checkbox_x($name, $title, $value, $id, $style, $class, $description){
     if ( $title != '' ) {
-		?><td>
+		?><div>
 		<legend>
             <span><?php echo esc_html( $title ); ?></span>
 		</legend>
@@ -119,13 +193,22 @@ function checkbox_x($name, $title, $value, $id, $style, $class, $description){
             <?php checked( $value, $value ); ?> />
         <?php echo wp_kses_post( $description ); ?>
 	</label>
-    </td>
+    </div>
 	<?php					
 }
 
+/**
+ * Radio fields
+ * @param array $options
+ * @param string $name
+ * @param string $css
+ * @param string $class
+ * @param string $value
+ * @return void
+ */
 function radio_x(array $options, $name, $css, $class, $value){
     ?>
-    <td>
+    <div>
 	<fieldset>
 		<ul>
             <?php
@@ -147,13 +230,20 @@ function radio_x(array $options, $name, $css, $class, $value){
             ?>
 		</ul>
 	</fieldset>
-    </td>
+    </div>
 	<?php
 }
 
+/**
+ * File fields
+ * @param string $name
+ * @param string $class
+ * @param string $value
+ * @return void
+ */
 function file_x($name, $class, $value){
     ?>
-    <td>
+    <div>
     <div class="<?php echo esc_attr( $class ); ?>">
         <input type="hidden" name="<?php echo esc_attr( $name ); ?>"
             value="<?php echo esc_attr( $value ); ?>">
@@ -165,13 +255,22 @@ function file_x($name, $class, $value){
             ?>
         </div>
     </div>
-    </td>
+    </div>
     <?php
 }
 
+/**
+ * Button fields
+ * @param string $id
+ * @param string $style
+ * @param string $value
+ * @param string $class
+ * @param string $title
+ * @return void
+ */
 function button_submit_x($id, $style, $value, $class, $title){
     ?>
-    <td>
+    <div>
         <button 
             id="<?php echo esc_attr( $id ); ?>" 
             style="<?php echo esc_attr( $style ); ?>"
@@ -179,6 +278,6 @@ function button_submit_x($id, $style, $value, $class, $title){
             class="<?php echo esc_attr( $class ); ?>" 
             type="submit">
             <?php echo esc_attr( $title ); ?></button>
-    </td>
+    </div>
 	<?php
 }
