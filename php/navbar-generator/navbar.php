@@ -5,7 +5,8 @@ $navbarData = array(
     'id' => 'my-navbar',
     'style' => 'background-color: #e3f2fd ',
     'brand' => array(
-        'link' => '/',
+        'href' => '/',
+        'logo' => '/images/logo.png',
         'text' => 'Mon site'
     ),
     'links' => array(
